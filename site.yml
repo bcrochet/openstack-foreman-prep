@@ -1,0 +1,83 @@
+---
+- hosts: beaker
+  remote_user: root
+
+  handlers:
+    - name: restart ntpd
+      service: name=ntpd state=restarted
+
+    - name: reboot
+      command: "/sbin/shutdown -r {{ reboot_delay }} 'Reboot is triggered by Ansible'"
+
+    - name: Wait for host to stop
+      local_action: "wait_for host={{ hostvars[inventory_hostname].ansible_ssh_host }} port=22 state=stopped"
+
+    - name: Wait for host to come back
+      local_action: "wait_for host={{ hostvars[inventory_hostname].ansible_ssh_host }} port=22 delay=90 timeout=600"
+
+  tasks:
+    - name: be sure libselinux-python is installed
+      yum: name=libselinux-python state=installed
+      tags: libselinux-python
+
+    - name: be sure ntp is installed
+      yum: name=ntp state=installed
+      tags: ntp
+
+    - name: be sure ntp is configured
+      template: src=ntp.conf.j2 dest=/etc/ntp.conf
+      notify:
+        - restart ntpd
+      tags: ntp
+
+    - name: be sure ntpd is running and enabled
+      service: name=ntpd state=running enabled=yes
+      tags: ntp
+
+    - name: RHOS Repo
+      yum: name={{ rhos_repo_rpm }} state=present
+
+    - name: Install packages
+      yum: name={{ item }} state=latest
+      with_items:
+        - openvswitch
+        - openvswitch-controller
+        - openvswitch-test
+        - libvirt
+        - libguestfs-tools
+        - qemu-kvm
+        - spice-server
+        - qemu-img
+
+    - name: Configure bridge
+      template: src=ifcfg-ovsbr0.j2 dest=/etc/sysconfig/network-scripts/ifcfg-ovsbr0 mode=644 owner=root group=root
+      notify:
+        - reboot
+        - Wait for host to stop
+        - Wait for host to come back
+
+    - name: Configure main interface
+      lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-{{ ansible_interfaces[1] }} regexp='^{{ item.key }}' line='{{ item.key }}="{{ item.value }}"' state=present
+      with_items:
+        - { key: "BOOTPROTO", value: "none" }
+        - { key: "NM_CONTROLLED", value: "no" }
+        - { key: "ONBOOT", value: "yes" }
+        - { key: "TYPE", value: "OVSPort" }
+        - { key: "OVS_BRIDGE", value: "ovsbr0" }
+        - { key: "HOTPLUG", value: "no" }
+      notify:
+        - reboot
+        - Wait for host to stop
+        - Wait for host to come back
+
+    - name: Configure qemu
+      lineinfile: dest=/etc/libvirt/qemu.conf regexp='^{{ item.key }}' line='{{ item.key }} = "{{ item.value }}"' state=present
+      with_items:
+        - { key: "vnc_listen", value: "0.0.0.0" }
+        - { key: "spice_listen", value: "0.0.0.0" }
+
+    - name: Push up reset_vms.sh script to root home
+      sudo: yes
+      copy: src=reset_vms.sh dest=/root/reset_vms.sh mode=755
+
+    - meta: flush_handlers
