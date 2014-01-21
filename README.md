@@ -1,0 +1,1 @@
+Copy group_vars/all.sample to group_vars/all, and edit.

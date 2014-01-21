@@ -3,5 +3,5 @@ ONBOOT=yes
 DEVICETYPE=ovs
 TYPE=OVSBridge
 OVSBOOTPROTO=dhcp
-OVSDHCPINTERFACES={{ hostvars[inventory_hostname].ansible_interfaces[1] }}
+OVSDHCPINTERFACES={{ ovs_interface }}
 HOTPLUG=no
