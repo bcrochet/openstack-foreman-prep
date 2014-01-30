@@ -1,0 +1,5 @@
+---
+- hosts: vm_host
+  roles:
+    - { role: ssh-passthru-config }
+
