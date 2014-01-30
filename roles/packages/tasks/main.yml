@@ -1,0 +1,31 @@
+---
+- name: Host dependencies
+  yum: name={{ item }} state=latest
+  with_items:
+    - nfs-utils
+    - qemu-kvm
+    - spice-server
+    - qemu-img
+    - libguestfs-tools
+    - libvirt
+    - virt-manager
+    - git
+    - tigervnc-server
+    - tigervnc-server-module
+    - tigervnc
+    - xorg-x11-twm
+    - xorg-x11-server-utils
+    - emacs-nox
+    - virt-viewer
+    - nc
+    - git-review
+    - python-virtualenv
+
+- name: Install python-virtinst on RHEL
+  yum: name=python-virtinst state=latest
+  when: ansible_distribution == 'RedHat'
+
+- name: Install virt-install on Fedora
+  yum: name=virt-install state=latest
+  when: ansible_distribution == 'Fedora'
+

@@ -1,0 +1,10 @@
+---
+- name: Set host to permissive mode
+  selinux: state=permissive policy=targeted
+
+- name: Empty iptables
+  shell: /sbin/iptables --flush
+
+- name: Set ip forwarding to true
+  sysctl: name=net.ipv4.ip_forward value=1 state=present reload=yes
+

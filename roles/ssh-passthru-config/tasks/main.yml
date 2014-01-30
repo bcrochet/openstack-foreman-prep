@@ -1,0 +1,4 @@
+---
+- name: Generate ssh_config for passthru
+  template: src=ssh_config.j2 dest=/tmp/ssh_config_{{ inventory_hostname }}
+  delegate_to: 127.0.0.1

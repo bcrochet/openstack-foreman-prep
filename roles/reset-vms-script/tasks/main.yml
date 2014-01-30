@@ -1,0 +1,5 @@
+---
+- name: Push up reset_vms.sh script to root home
+  sudo: yes
+  copy: src=reset_vms.sh dest={{ ansible_env.HOME }}/reset_vms.sh mode=755
+

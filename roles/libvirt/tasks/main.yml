@@ -1,0 +1,21 @@
+---
+- name: Configure qemu
+  lineinfile: dest=/etc/libvirt/qemu.conf
+          regexp='^{{ item.key }}'
+          line='{{ item.key }} = "{{ item.value }}"'
+          state=present
+  with_items:
+    - { key: "vnc_listen", value: "0.0.0.0" }
+    - { key: "spice_listen", value: "0.0.0.0" }
+
+- name: Start libvirtd
+  service: name=libvirtd state=running enabled=yes
+
+- name: Create pool directory
+  file: path={{ poolpath }} state=directory
+
+- name: Create and build pool
+  script: pool_build.sh {{ poolpath }}
+
+- name: Restart libvirtd
+  service: name=libvirtd state=restarted

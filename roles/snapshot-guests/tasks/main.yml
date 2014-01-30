@@ -1,0 +1,29 @@
+---
+- name: Shut down guests
+  virt: name={{ item.name }} state=shutdown
+  with_items: vmset
+  tags:
+    - snapshot
+
+- name: Wait for node to shut down
+  wait_for: host={{ hostvars[item.name].ansible_ssh_host }} port=22 state=stopped
+  with_items: vmset
+  tags:
+    - snapshot
+
+- name: Pause for a bit to let the node finish shutdown
+  pause: seconds=15
+  tags:
+    - snapshot
+
+- name: Snapshot!
+  shell: virsh snapshot-create-as {{ item.name }} {{ snapshot_name }}
+  with_items: vmset
+  tags:
+    - snapshot
+
+- name: Restart the guests
+  virt: name={{ item.name }} state=running
+  with_items: vmset
+  tags:
+    - restart_guests

@@ -1,0 +1,2 @@
+---
+sysprep_operations: "abrt-data,bash-history,blkid-tab,crash-data,cron-spool,dhcp-client-state,hostname,logfiles,lvm-uuids,machine-id,net-hostname,net-hwaddr,random-seed,rhn-systemid,ssh-hostkeys,udev-persistent-net,utmp,yum-uuid"

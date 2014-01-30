@@ -1,0 +1,9 @@
+---
+- name: be sure libselinux-python is installed
+  yum: name=libselinux-python state=installed
+  tags: libselinux-python
+
+- name: Add epel repos
+  yum: name={{ epel_release_rpm }} state=installed
+  when: ansible_distribution == 'RedHat'
+

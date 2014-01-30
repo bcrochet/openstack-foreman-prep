@@ -3,6 +3,10 @@ ntp_server: clock.example.com
 rhos_repo_rpm: http://repos.fedorapeople.org/repos/openstack/openstack-icehouse/rdo-release-icehouse-1.noarch.rpm
 default_ip_prefix: 192.168.7
 initimage: rhel65init
+poolpath: /home/vms
+install_url: http://super.secret.rhel.install.example.com/RHEL-6/6.5/Server/x86_64/os/
+remote_user: root
+remote_user_client: root
 vmset:
     - name: foreman
       groups: foreman
@@ -16,5 +20,3 @@ vmset:
     - name: networker
       groups: networker
       foreman_node_hostgroup: Neutron Networker
-poolpath: /home/vms
-install_url: http://super.secret.rhel.install.example.com/RHEL-6/6.5/Server/x86_64/os/

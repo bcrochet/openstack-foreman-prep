@@ -1,0 +1,46 @@
+---
+- hosts: vm_host
+  remote_user: root
+  sudo: yes
+
+  tasks:
+    - name: Stop initimage
+      virt: name={{ initimage }} command=destroy
+      ignore_errors: True
+
+    - name: Stop VMs
+      virt: name={{ item.name }} command=destroy
+      ignore_errors: True
+      with_items: vmset
+
+    - name: Undefine initimage
+      virt: name={{ initimage }} command=undefine
+      ignore_errors: True
+
+    - name: List snapshots
+      shell: virsh snapshot-list {{ item.name }} --name 2> /dev/null | xargs
+      register: snapshot_list
+      with_items: vmset
+      ignore_errors: True
+      tags:
+        - snapshot_list
+
+    - name: Remove snapshots
+      shell: for snapshot in {{ item.stdout }}; do virsh snapshot-delete {{ item.item.name }} ${snapshot}; done
+      when: (item.rc == 0 and item.stdout != "")
+      with_items: snapshot_list.results
+      tags:
+        - snapshot_list
+
+    - name: Undefine VMs
+      virt: name={{ item.name }} command=undefine
+      ignore_errors: True
+      with_items: vmset
+
+    - name: Delete initimage volume
+      shell: virsh vol-delete {{ initimage }}.qcow2 --pool default
+
+    - name: Delete VM volume
+      shell: virsh vol-delete {{ item.name }}.qcow2 --pool default
+      with_items: vmset
+

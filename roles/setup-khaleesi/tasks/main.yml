@@ -1,0 +1,7 @@
+---
+- name: Get khaleesi
+  git: repo={{ khaleesi_repo }} dest={{ ansible_env.HOME }}/khaleesi version={{ khaleesi_branch }}
+
+- name: Install ansible
+  pip: name=ansible virtualenv={{ ansible_env.HOME }}/ansible
+

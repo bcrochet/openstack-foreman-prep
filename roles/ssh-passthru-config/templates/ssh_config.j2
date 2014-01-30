@@ -1,0 +1,11 @@
+Host {{ inventory_hostname }}
+    UserKnownHostsFile /dev/null
+    StrictHostKeyChecking no
+    User {{ remote_user }}
+
+Host {{ default_ip_prefix }}.*
+    UserKnownHostsFile /dev/null
+    StrictHostKeyChecking no
+    ProxyCommand ssh root@{{ inventory_hostname }} -W %h:%p
+    User {{ remote_user }}
+    IdentityFile /tmp/ssh_key/{{ inventory_hostname }}{{ hostvars[inventory_hostname].ansible_env.HOME }}/.ssh/id_rsa

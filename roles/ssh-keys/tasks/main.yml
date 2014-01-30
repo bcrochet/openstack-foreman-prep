@@ -1,0 +1,24 @@
+---
+- name: Generate ssh key
+  shell: ssh-keygen -t rsa -N '' -f {{ ansible_env.HOME }}/.ssh/id_rsa
+        creates={{ ansible_env.HOME }}/.ssh/id_rsa
+
+- name: Get the private key
+  fetch: dest=/tmp/ssh_key
+        fail_on_missing=yes
+        src={{ ansible_env.HOME }}/.ssh/id_rsa
+
+- name: Fix permissions on private key
+  local_action: file
+        name=/tmp/ssh_key/{{ inventory_hostname }}{{ ansible_env.HOME }}/.ssh/id_rsa
+        mode=600
+        state=file
+
+- name: Get the public key
+  fetch: dest=/tmp/ssh_key fail_on_missing=yes src={{ ansible_env.HOME }}/.ssh/id_rsa.pub
+
+- name: Put authorized_keys in vm-share
+  copy: src=/tmp/ssh_key/{{ inventory_hostname }}{{ ansible_env.HOME }}/.ssh/id_rsa.pub
+        dest=/mnt/vm-share/authorized_keys
+        mode=666
+

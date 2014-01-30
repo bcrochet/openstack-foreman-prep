@@ -1,0 +1,35 @@
+---
+- name: Put down rc.local
+  template: src=rc.local.j2 dest=/etc/rc.d/rc.local backup=yes mode=755 owner=root group=root
+  tags:
+    - client_config
+
+- name: Disable selinux
+  selinux: state=disabled
+  tags:
+    - client_config
+
+- name: Put down network
+  template: src=network.j2 dest=/etc/sysconfig/network backup=yes mode=644 owner=root group=root
+  tags:
+    - client_config
+
+- name: Add NFS mount
+  lineinfile: dest=/etc/fstab
+        regexp="^{{ default_ip_prefix }}.1:/mnt/vm-share"
+        line="{{ default_ip_prefix }}.1:/mnt/vm-share /mnt/vm-share nfs defaults 0 0"
+  tags:
+    - client_config
+
+- name: Check for ipv6 and noapic
+  command: grep -q 'kernel.*ipv6.disable' /boot/grub/grub.conf
+  ignore_errors: True
+  register: ipv6_disabled
+  tags:
+    - client_config
+
+- name: Disable ipv6 and set noapic
+  shell: "perl -p -i -e 's/^(\\s*kernel\\s+.*)\\$/\\$1 noapic ipv6.disable=1/' /boot/grub/grub.conf"
+  when: ipv6_disabled.rc != 0
+  tags:
+    - client_config

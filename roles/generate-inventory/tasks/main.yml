@@ -1,0 +1,40 @@
+---
+- name: Get the mac addresses of the vms
+  shell: virsh domiflist {{ item.name }} | awk '/default/ { print $5; }'
+  register: vm_mac
+  with_items: vmset
+  tags:
+    - inventory
+
+- name: Wait for the guests to be booted and have IPs
+  wait_for: path=/var/lib/libvirt/dnsmasq/default.leases search_regex={{ item.stdout }}
+  with_items: vm_mac.results
+
+- name: Get the ip addresses of the new vms
+  shell: grep $(virsh domiflist {{ item.name }} | awk '/default/ { print $5;}') /var/lib/libvirt/dnsmasq/default.leases | awk '{ print $3; }'
+  register: client_vm_ip
+  with_items: vmset
+  tags:
+    - inventory
+
+- name: Add the new vm's to inventory
+  add_host: name={{ item.0.name }} ansible_ssh_host={{ item.1.stdout }} groups=clients,{{ item.0.groups }}
+  with_together:
+    - vmset
+    - client_vm_ip.results
+  tags:
+    - inventory
+
+- name: Wait for the clients to come up
+  wait_for: host={{ hostvars[item].ansible_ssh_host }} port=22 delay=10 timeout=300
+  with_items: groups.clients
+
+- name: Populate inventory file
+  template: src=inventory.j2 dest={{ ansible_env.HOME }}/inventory_{{ inventory_hostname }}
+  tags:
+    - inventory
+
+- name: Pull inventory down to local machine
+  fetch: src={{ ansible_env.HOME}}/inventory_{{ inventory_hostname }}
+        dest=/tmp/inventory
+
