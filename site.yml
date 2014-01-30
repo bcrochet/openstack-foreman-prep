@@ -16,7 +16,6 @@
     - { role: generate-inventory }
     - { role: setup-khaleesi }
     - { role: reset-vms-script }
-    - { role: ssh-passthru-config }
 
 - hosts: clients
   remote_user: "{{ remote_user_client }}"
