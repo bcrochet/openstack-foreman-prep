@@ -21,11 +21,17 @@
     - git-review
     - python-virtualenv
 
-- name: Install python-virtinst on RHEL
-  yum: name=python-virtinst state=latest
+- name: Install additional RHEL packages
+  yum: name={{ item }} state=latest
+  with_items:
+    - ncat
+    - python-virtinst
   when: ansible_distribution == 'RedHat'
 
-- name: Install virt-install on Fedora
-  yum: name=virt-install state=latest
+- name: Install additional Fedora packages
+  yum: name={{ item }} state=latest
+  with_items:
+    - nmap-ncat
+    - virt-install
   when: ansible_distribution == 'Fedora'
 
