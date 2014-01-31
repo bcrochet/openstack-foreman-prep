@@ -18,7 +18,7 @@
     - inventory
 
 - name: Add the new vm's to inventory
-  add_host: name={{ item.0.name }} ansible_ssh_host={{ item.1.stdout }} groups=clients,{{ item.0.groups }} foreman_node_hostgroup={{ item.0.foreman_node_hostgroup }}
+  add_host: name={{ item.0.name }} ansible_ssh_host={{ item.1.stdout }} groups=clients,{{ item.0.groups }} foreman_node_hostgroup="{{ item.0.foreman_node_hostgroup }}"
   with_together:
     - vmset
     - client_vm_ip.results
