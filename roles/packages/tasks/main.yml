@@ -24,14 +24,12 @@
 - name: Install additional RHEL packages
   yum: name={{ item }} state=latest
   with_items:
-    - ncat
     - python-virtinst
   when: ansible_distribution == 'RedHat'
 
 - name: Install additional Fedora packages
   yum: name={{ item }} state=latest
   with_items:
-    - nmap-ncat
     - virt-install
   when: ansible_distribution == 'Fedora'
 
