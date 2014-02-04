@@ -1,0 +1,19 @@
+---
+- name: Shut down guests
+  virt: name={{ item.name }} command=destroy
+  with_items: vmset
+  ignore_errors: True
+  tags:
+    - snapshot_revert
+
+- name: Revert!
+  shell: virsh snapshot-revert {{ item.name }} {{ snapshot_name }}
+  with_items: vmset
+  tags:
+    - snapshot_revert
+
+- name: Restart the guests
+  virt: name={{ item.name }} state=running
+  with_items: vmset
+  tags:
+    - restart_guests
