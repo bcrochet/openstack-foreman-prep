@@ -1,3 +1,6 @@
+Usage
+-----
+
 Copy group_vars/all.sample to group_vars/all, and edit.
 
 Put your target in an inventory file
@@ -26,6 +29,19 @@ Add a target host to your inventory, and run.
 
 You will end up with an inventory file pointing to your new VMs in /tmp/inventory.
 
-TODO:
+Revert
+------
 
-Fix need to run with --skip-tags clone_images
+You can revert to the 'first_snap' snapshot by running
+
+    ansible-playbook -i hosts revert.yml
+
+Cleanup
+-------
+
+You can remove all the guests (including the initimage) with
+
+    ansible-playbook -i hosts cleanup.yml
+
+Currently, this doesn't clean up the snapshots quite right on RHEL 6.x. Works on Fedora.
+
