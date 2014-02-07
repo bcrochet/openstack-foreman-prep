@@ -5,23 +5,16 @@
 - name: Create image file
   qemu_img: dest={{ poolpath }}/{{ initimage }}.qcow2 size=9000 format=qcow2 opt=preallocation=metadata state=present
 
-# Maybe later???
-# - name: Define the VM
-#   virt: name={{ initimage }}
-#         command=define
-#         xml="{{ lookup('template', 'container-template.xml.j2') }}"
-
-# - name: Start the VM
-#   virt:
 - name: Kick off the virt-install
   shell: virt-install --connect=qemu:///system
            --network network:default
-           --network network:foreman_1
            --network network:openstackvms1_1
            --network network:openstackvms1_2
-           --network network:foreman_2
+           --network network:openstackvms1_3
            --network network:openstackvms2_1
            --network network:openstackvms2_2
+           --network network:openstackvms2_3
+           --network network:foreman_1
            --initrd-inject=/tmp/base.ks
            --extra-args="ks=file:/base.ks ksdevice=eth0 noipv6 ip=dhcp keymap=us lang=en_US"
            --name={{ initimage }}
@@ -37,38 +30,6 @@
            --wait=-1
            creates=/etc/libvirt/qemu/{{ initimage }}.xml
   register: vm_create
-
-# - name: Get the mac addresses of the vm
-#   shell: virsh domiflist {{ initimage }} | awk '/default/ { print $5; }'
-#   register: vm_mac
-#   when: vm_create|changed
-
-# - name: Wait for the guest to be booted and have IPs
-#   wait_for: path=/var/lib/libvirt/dnsmasq/default.leases search_regex={{ vm_mac.stdout }}
-#   when: vm_create|changed
-
-# - name: Get the ip address of the new vm
-#   shell: "grep $(virsh domiflist {{ initimage }} | awk '/default/ { print $5;}') /var/lib/libvirt/dnsmasq/default.leases | awk '{ print $3; }'"
-#   register: vm_ip
-
-# - name: Add the new host to inventory
-#   add_host: name={{ initimage }} ansible_ssh_host={{ vm_ip.stdout }} groups=init
-
-# - name: Make sure guest is started if not created
-#   virt: name={{ initimage }} state=running
-#   when: vm_create|skipped
-
-# - name: Wait for new host to finish installing
-#   # wait_for: host={{ hostvars[initimage].ansible_ssh_host }} port=22 delay=10 timeout=600
-#   pause: minutes=5
-
-# - name: Now shut it down
-#   virt: name={{ initimage }} state=shutdown
-#   register: node_shutdown
-
-# - name: Wait for node to shut down
-#   wait_for: host={{ hostvars[initimage].ansible_ssh_host }} port=22 state=stopped
-#   when: node_shutdown|changed
 
 - name: Pause for a bit to let the node finish shutdown
   pause: seconds=15

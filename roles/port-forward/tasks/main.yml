@@ -1,0 +1,12 @@
+---
+- name: Add DNAT rules
+  shell: iptables -t nat -I PREROUTING -i {{ ansible_default_ipv4.interface }} -p tcp --dport {{ item.1.host_port }} -j DNAT --to {{ hostvars[item.0.guest].ansible_default_ipv4.address }}:{{ item.1.guest_port }}
+  with_subelements:
+    - port_forwards
+    - ports
+
+- name: Add FORWARD rules
+  shell: iptables -I FORWARD -i {{ ansible_default_ipv4.interface }} -p tcp --dport {{ item.1.guest_port }} -d {{ hostvars[item.0.guest].ansible_default_ipv4.address }} -j ACCEPT
+  with_subelements:
+    - port_forwards
+    - ports

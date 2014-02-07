@@ -20,6 +20,16 @@
 - hosts: clients
   remote_user: "{{ remote_user_client }}"
   sudo: yes
+
+- hosts: vm_host
+  remote_user: "{{ remote_user }}"
+  sudo: yes
+  roles:
+    - { role: port-forward }
+
+- hosts: clients
+  remote_user: "{{ remote_user_client }}"
+  sudo: yes
   roles:
     - { role: client-config }
 

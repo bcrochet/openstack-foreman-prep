@@ -1,0 +1,21 @@
+---
+port_forwards:
+  - guest: controller
+    ports:
+      - { host_port: 80, guest_port: 80 }
+      - { host_port: 443, guest_port: 443 }
+      - { host_port: 5000, guest_port: 5000 }
+      - { host_port: 35357, guest_port: 35357 }
+      - { host_port: 9292, guest_port: 9292 }
+      - { host_port: 8773, guest_port: 8773 }
+      - { host_port: 8774, guest_port: 8774 }
+      - { host_port: 8775, guest_port: 8775 }
+      - { host_port: 8776, guest_port: 8776 }
+      - { host_port: 8777, guest_port: 8777 }
+      - { host_port: 6080, guest_port: 6080 }
+      - { host_port: 9696, guest_port: 9696 }
+      - { host_port: 8000, guest_port: 8000 }
+      - { host_port: 8004, guest_port: 8004 }
+  - guest: foreman
+    ports:
+      - { host_port: 8443, guest_port: 443 }
