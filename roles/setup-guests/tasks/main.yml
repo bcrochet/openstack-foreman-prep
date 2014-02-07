@@ -1,13 +1,15 @@
 ---
 - name: Clone the real images
-  shell: virt-clone -o {{ initimage }} -n {{ item.name }} -f {{ poolpath }}/{{ item.name }}.qcow2
+  shell: virt-clone -o {{ initimage }} -n {{ item.name }} -f {{ poolpath }}/{{ item.name }}.qcow2 creates={{ poolpath }}/{{ item.name }}.qcow2
   with_items: vmset
+  register: cloned
   tags:
     - clone_images
 
 - name: Sysprep the real images
   shell: virt-sysprep --enable {{ sysprep_operations }} -d {{ item.name }}
   with_items: vmset
+  when: cloned|changed
   tags:
     - clone_images
 
