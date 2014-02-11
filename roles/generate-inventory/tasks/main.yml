@@ -37,4 +37,5 @@
 - name: Pull inventory down to local machine
   fetch: src={{ ansible_env.HOME}}/inventory_{{ inventory_hostname }}
         dest=/tmp/inventory
-
+  tags:
+    - inventory
