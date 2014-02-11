@@ -7,6 +7,7 @@ poolpath: /home/vms
 install_url: http://super.secret.rhel.install.example.com/RHEL-6/6.5/Server/x86_64/os/
 remote_user: root
 remote_user_client: root
+ssh_key: /path/to/.ssh/id_rsa
 vmset:
     - name: foreman
       groups: foreman
