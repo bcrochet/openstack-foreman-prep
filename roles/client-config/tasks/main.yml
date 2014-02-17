@@ -21,15 +21,15 @@
   tags:
     - client_config
 
-- name: Check for ipv6 and noapic
-  command: grep -q 'kernel.*ipv6.disable' /boot/grub/grub.conf
+- name: Check for noapic
+  command: grep -q 'kernel.*noapic' /boot/grub/grub.conf
   ignore_errors: True
-  register: ipv6_disabled
+  register: apic_disabled
   tags:
     - client_config
 
-- name: Disable ipv6 and set noapic
-  shell: "perl -p -i -e 's/^(\\s*kernel\\s+.*)\\$/\\$1 noapic ipv6.disable=1/' /boot/grub/grub.conf"
-  when: ipv6_disabled.rc != 0
+- name: Set noapic
+  shell: "perl -p -i -e 's/^(\\s*kernel\\s+.*)\\$/\\$1 noapic/' /boot/grub/grub.conf"
+  when: apic_disabled.rc != 0
   tags:
     - client_config
