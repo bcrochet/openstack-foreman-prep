@@ -1,0 +1,23 @@
+---
+whiteboard: ''
+distro_arch: x86_64
+system_memory: 16000
+system_cores: 4
+distros:
+  fedora19:
+    name: Fedora-19
+    family: Fedora19
+    variant: Fedora
+  fedora20:
+    name: Fedora-20
+    family: Fedora20
+    variant: Fedora
+  rhel64:
+    name: RHEL-6.4
+    family: RedHatEnterpriseLinux6
+    variant: Server
+  rhel65:
+    name: RHEL-6.5
+    family: RedHatEnterpriseLinux6
+    variant: Server
+

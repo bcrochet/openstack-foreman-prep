@@ -45,3 +45,15 @@ You can remove all the guests (including the initimage) with
 
 Currently, this doesn't clean up the snapshots quite right on RHEL 6.x. Works on Fedora.
 
+Beaker
+------
+
+Add a host to your inventory in the [beaker_client] group
+
+To add a new *released* distro, put it in roles/beakerbox/defaults/main.yml.
+
+To add an as yet released distro, override the distros dictionary with the new
+release.
+
+To select a distro, set 'distro={distro name}' on the command line or in group_vars/all,
+where {distro name} is a key in the distros dict.

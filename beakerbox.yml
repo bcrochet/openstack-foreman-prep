@@ -1,0 +1,8 @@
+---
+- hosts: beaker_client
+  tasks:
+    - group_by: key={{ ansible_distribution }}
+
+- hosts: beaker_client
+  roles:
+    - { role: beakerbox }

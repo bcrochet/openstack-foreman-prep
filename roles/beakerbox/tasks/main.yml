@@ -1,0 +1,42 @@
+---
+- name: Beaker repos
+  sudo: yes
+  get_url:
+      url={{ beaker_repo_url }}
+      dest=/etc/yum.repos.d/beaker-client.repo
+      owner=root
+      group=root
+      mode=0644
+
+- name: Beaker client rpm
+  sudo: yes
+  yum: name=beaker-client state=latest
+
+- name: Generate template
+  template: src=beaker.xml.j2 dest=/tmp/beaker.xml
+
+- name: Kick off beaker job - username and password
+  shell: bkr job-submit --username={{ beaker_username }} --password={{ beaker_password }} /tmp/beaker.xml
+  register: bkr_job_submit
+  when: beaker_username is defined
+
+- name: Kick off beaker job - kerberos
+  shell: bkr job-submit /tmp/beaker.xml
+  register: bkr_job_submit
+  when: beaker_username is not defined
+
+- name: Get the beaker job name
+  shell: echo "{{ bkr_job_submit.stdout }}" | awk -F"'" '{ print $2; }'
+  register: beaker_job_name
+
+- name: Get the job results
+  shell: 'bkr job-results --prettyxml {{ beaker_job_name.stdout }} | awk ''/<task.*name="\/distribution\/install/ { gsub(".*id=\"", ""); gsub("\".*",""); print }'''
+  register: beaker_task_id
+
+- name: Wait for the beaker job to complete
+  shell: 'bkr job-watch T:{{ beaker_task_id.stdout }}'
+  register: job_watch_result
+  until: job_watch_result.rc != 1
+  retries: 30
+  delay: 15
+

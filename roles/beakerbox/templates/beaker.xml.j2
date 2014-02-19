@@ -1,0 +1,54 @@
+<job retention_tag="scratch">
+    <whiteboard>
+        {{ whiteboard }}
+    </whiteboard>
+    <recipeSet priority="High">
+        <recipe kernel_options="console=ttyS1,115200n8 ksdevice=bootif text verbose" kernel_options_post="console=ttyS1,115200n8 text verbose" ks_meta="partitions=yes" role="RECIPE_MEMBERS" whiteboard="{{ whiteboard }}">
+            <autopick random="true"/>
+            <watchdog panic="ignore"/>
+            <packages>
+                <package name="libselinux-python"/>
+            </packages>
+            <ks_appends/>
+            <repos/>
+            <distroRequires>
+                <and>
+                    <family op="=" value="{{ distros[distro].family }}"/>
+                    <variant op="=" value="{{ distros[distro].variant }}"/>
+                    <name op="=" value="{{ distros[distro].name }}"/>
+                    <arch op="=" value="{{ distro_arch }}"/>
+                </and>
+            </distroRequires>
+            <hostRequires>
+                <and>
+                    <system>
+                        <and>
+                            {% if hostname is defined %}
+                            <name op="=" value="{{ hostname }}"/>
+                            {% else %}
+                            <hypervisor op="=" value=""/>
+                            <type op="=" value="Machine"/>
+                            <arch op="=" value="x86_64"/>
+                            <memory op=">=" value="{{ system_memory }}"/>
+                            {% endif %}
+                        </and>
+                    </system>
+                    {% if hostname is not defined %}
+                    <cpu>
+                        <cores op=">=" value="{{ system_cores }}"/>
+                    </cpu>
+                    {% endif %}
+                </and>
+            </hostRequires>
+            <partitions/>
+            <task name="/distribution/install" role="STANDALONE">
+                <params/>
+            </task>
+            <task name="/distribution/reservesys" role="STANDALONE">
+                <params>
+                    <param name="RESERVETIME" value="604800"/>
+                </params>
+            </task>
+        </recipe>
+    </recipeSet>
+</job>
