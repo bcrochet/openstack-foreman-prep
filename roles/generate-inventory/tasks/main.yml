@@ -44,12 +44,13 @@
 
 - name: Populate inventory file for Jenkins
   template: src=inventory.j2 dest={{ ansible_env.HOME }}/inventory_{{ build_tag }}
+  when: build_tag is defined
   tags:
     - inventory
-  when: build_tag is defined
 
 - name: Pull inventory down to local machine for Jenkins
   fetch: src={{ ansible_env.HOME}}/inventory_{{ build_tag }}
         dest=/tmp/inventory
   when: build_tag is defined
-
+  tags:
+    - inventory
