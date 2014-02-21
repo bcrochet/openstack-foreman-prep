@@ -1,0 +1,5 @@
+{% for network_name in network_names %}
+  {% for network_number in network_numbers %}
+  --network network:{{ network_name }}_{{ network_number }}
+  {%- endfor %}
+{%- endfor %}

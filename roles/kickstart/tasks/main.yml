@@ -8,9 +8,7 @@
 - name: Kick off the virt-install
   shell: virt-install --connect=qemu:///system
            --network network:default
-           --network network:openstackvms1_1
-           --network network:openstackvms2_1
-           --network network:foreman_1
+           {{ lookup('template', '../templates/networks.j2') }}
            --initrd-inject=/tmp/base.ks
            --extra-args="ks=file:/base.ks ksdevice=eth0 ip=dhcp keymap=us lang=en_US"
            --name={{ initimage }}

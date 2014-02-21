@@ -1,0 +1,9 @@
+---
+- hosts: vm_host
+  remote_user: "{{ remote_user }}"
+  sudo: yes
+  roles:
+    - { role: port-forward }
+  tags:
+    - port-forward
+
