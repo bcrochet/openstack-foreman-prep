@@ -33,23 +33,23 @@
   template: src=inventory.j2 dest={{ ansible_env.HOME }}/inventory_{{ inventory_hostname }}
   tags:
     - inventory
-  when: ansible_env.BUILD_TAG is not defined
+  when: build_tag is not defined
 
 - name: Pull inventory down to local machine
   fetch: src={{ ansible_env.HOME}}/inventory_{{ inventory_hostname }}
         dest=/tmp/inventory
-  when: ansible_env.BUILD_TAG is not defined
+  when: build_tag is not defined
   tags:
     - inventory
 
 - name: Populate inventory file for Jenkins
-  template: src=inventory.j2 dest={{ ansible_env.HOME }}/inventory_{{ ansible_env.BUILD_TAG }}
+  template: src=inventory.j2 dest={{ ansible_env.HOME }}/inventory_{{ build_tag }}
   tags:
     - inventory
-  when: ansible_env.BUILD_TAG is defined
+  when: build_tag is defined
 
 - name: Pull inventory down to local machine for Jenkins
-  fetch: src={{ ansible_env.HOME}}/inventory_{{ ansible_env.BUILD_TAG }}
+  fetch: src={{ ansible_env.HOME}}/inventory_{{ build_tag }}
         dest=/tmp/inventory
-  when: ansible_env.BUILD_TAG is defined
+  when: build_tag is defined
 
