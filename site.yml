@@ -8,7 +8,7 @@
     - { role: packages }
     - { role: security }
     - { role: libvirt }
-    - { role: networks }
+    - { role: networks, tags: ['networks'] }
     - { role: nfs-setup }
     - { role: ssh-keys }
     - { role: kickstart }

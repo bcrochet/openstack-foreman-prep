@@ -7,7 +7,8 @@ localhost
 
 [{{ group }}]
 {% for host in groups[group] %}
-{{ hostvars[host]['inventory_hostname_short'] }} ansible_ssh_host={{ hostvars[host]['ansible_ssh_host'] }} public_ip={{ hostvars[host]['ansible_ssh_host'] }} fqdn={{ hostvars[host]['inventory_hostname_short'] }}.example.com priv_hostname={{ hostvars[host]['inventory_hostname_short'] }}.example.com foreman_private_ip=192.168.200.{{ outer_loop.index }}{{ loop.index }} foreman_public_ip=192.168.201.{{ outer_loop.index }}{{ loop.index }} mysql_cluster_ip=192.168.203.{{ outer_loop.index }}{{loop.index }} ansible_ssh_private_key_file={{ ssh_key }} foreman_node_hostgroup="{{ hostvars[host]['foreman_node_hostgroup'] }}"
+{% set last_octet = hostvars[host]['ansible_ssh_host'].split('.')[3] %}
+{{ hostvars[host]['inventory_hostname_short'] }} ansible_ssh_host={{ hostvars[host]['ansible_ssh_host'] }} public_ip={{ hostvars[host]['ansible_ssh_host'] }} fqdn={{ hostvars[host]['inventory_hostname_short'] }}.example.com priv_hostname={{ hostvars[host]['inventory_hostname_short'] }}.example.com foreman_private_ip=192.168.200.{{ last_octet }} foreman_public_ip=192.168.201.{{ last_octet }} mysql_cluster_ip=192.168.203.{{ last_octet }} ansible_ssh_private_key_file={{ ssh_key }} foreman_node_hostgroup="{{ hostvars[host]['foreman_node_hostgroup'] }}"
 
 {% endfor %}
 {% endif %}
@@ -30,3 +31,4 @@ controller
 {{ group }}
 {% endif %}
 {% endfor %}
+

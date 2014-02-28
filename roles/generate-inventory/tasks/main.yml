@@ -30,26 +30,26 @@
   with_items: groups.clients
 
 - name: Populate inventory file
-  template: src=inventory.j2 dest={{ ansible_env.HOME }}/inventory_{{ inventory_hostname }}
+  template: src=inventory.j2 dest=/tmp/inventory_{{ inventory_hostname }}
   tags:
     - inventory
   when: build_tag is not defined
 
 - name: Pull inventory down to local machine
-  fetch: src={{ ansible_env.HOME}}/inventory_{{ inventory_hostname }}
+  fetch: src=/tmp/inventory_{{ inventory_hostname }}
         dest=/tmp/inventory
   when: build_tag is not defined
   tags:
     - inventory
 
 - name: Populate inventory file for Jenkins
-  template: src=inventory.j2 dest={{ ansible_env.HOME }}/inventory_{{ build_tag }}
+  template: src=inventory.j2 dest=/tmp/inventory_{{ build_tag }}
   when: build_tag is defined
   tags:
     - inventory
 
 - name: Pull inventory down to local machine for Jenkins
-  fetch: src={{ ansible_env.HOME}}/inventory_{{ build_tag }}
+  fetch: src=/tmp/inventory_{{ build_tag }}
         dest=/tmp/inventory
   when: build_tag is defined
   tags:

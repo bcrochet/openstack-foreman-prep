@@ -10,7 +10,7 @@
            --network network:default
            {{ lookup('template', '../templates/networks.j2') }}
            --initrd-inject=/tmp/base.ks
-           --extra-args="ks=file:/base.ks ksdevice=eth0 ip=dhcp keymap=us lang=en_US"
+           --extra-args="ks=file:/base.ks ksdevice=eth0 keymap=us lang=en_US"
            --name={{ initimage }}
            --location={{ install_url }}
            --disk {{ poolpath }}/{{ initimage }}.qcow2,format=qcow2
