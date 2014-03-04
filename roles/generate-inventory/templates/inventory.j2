@@ -3,7 +3,7 @@ localhost
 
 {% for group in groups %}
 {% set outer_loop = loop %}
-{% if group in ['foreman', 'controller', 'compute', 'networker', 'ha_mysql'] %}
+{% if group in ['foreman', 'controller', 'compute', 'networker', 'ha_mysql', 'tempest'] %}
 
 [{{ group }}]
 {% for host in groups[group] %}
@@ -13,10 +13,6 @@ localhost
 {% endfor %}
 {% endif %}
 {% endfor %}
-
-
-[tempest:children]
-controller
 
 [foreman_installer:children]
 {% for group in groups %}
