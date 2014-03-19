@@ -1,5 +1,26 @@
 ---
 ntp_server: clock.example.com
+initimages:
+  rhel65:
+    install_url: http://super.secret.example.com/RHEL-6/6.5/Server/x86_64/os/
+    initimage: rhel65init
+    os_variant: rhel6
+    ks_extra_args: "ip=dhcp"
+  rhel7:
+    install_url: http://super.secret.example.com/RHEL-7/7.0/Server/x86_64/os/
+    initimage: rhel7init
+    os_variant: rhel7
+    ks_extra_args: ""
+  centos65:
+    install_url: http://mirror.centos.org/centos/6/os/x86_64/
+    initimage: centos65init
+    os_variant: rhel6
+    ks_extra_args: "ip=dhcp"
+  fedora20:
+    install_url: http://fedora.mirror.example.com/20/Fedora/x86_64/os/
+    initimage: f20init
+    os_variant: fedora19
+    ks_extra_args: ""
 rhos_repo_rpm: http://repos.fedorapeople.org/repos/openstack/openstack-icehouse/rdo-release-icehouse-1.noarch.rpm
 default_ip_prefix: 192.168.7
 initimage: rhel65init

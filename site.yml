@@ -10,21 +10,18 @@
     - { role: libvirt }
     - { role: networks, tags: ['networks'] }
     - { role: nfs-setup }
-    - { role: ssh-keys }
-    - { role: kickstart }
-    - { role: setup-guests }
-    - { role: generate-inventory }
+    - { role: ssh-keys, tags: ['ssh-keys'] }
+    - { role: kickstart, tags: ['kickstart'] }
+    - { role: setup-guests, tags: ['setup-guests'] }
+    - { role: generate-inventory, tags: ['inventory'] }
     - { role: setup-khaleesi }
     - { role: reset-vms-script }
 
 - hosts: clients
   remote_user: "{{ remote_user_client }}"
   sudo: yes
-
-- hosts: clients
-  remote_user: "{{ remote_user_client }}"
-  sudo: yes
+  gather_facts: True
   roles:
-    - { role: client-config }
+    - { role: client-config, tags: ['client-config'] }
 
 - include: snapshot.yml

@@ -3,22 +3,21 @@
   template: src=base.ks.j2 dest=/tmp/base.ks
 
 - name: Create image file
-  qemu_img: dest={{ poolpath }}/{{ initimage }}.qcow2 size=9000 format=qcow2 opt=preallocation=metadata state=present
+  qemu_img: dest={{ poolpath }}/{{ initimage }}.qcow2 size={{ initdisksize }} format=qcow2 opt=preallocation=metadata state=present
 
 - name: Kick off the virt-install
   shell: virt-install --connect=qemu:///system
            --network network:default
-           {{ lookup('template', '../templates/networks.j2') }}
            --initrd-inject=/tmp/base.ks
-           --extra-args="ks=file:/base.ks ksdevice=eth0 keymap=us lang=en_US"
+           --extra-args="ks=file:/base.ks ksdevice=eth0 keymap=us lang=en_US {{ ks_extra_args }}"
            --name={{ initimage }}
            --location={{ install_url }}
            --disk {{ poolpath }}/{{ initimage }}.qcow2,format=qcow2
-           --ram 7000
-           --vcpus 3
+           --ram {{ initmemsize }}
+           --vcpus 2
            --cpu host
            --hvm
-           --os-variant rhel6
+           --os-variant {{ os_variant }}
            --vnc
            --noreboot
            --wait=-1

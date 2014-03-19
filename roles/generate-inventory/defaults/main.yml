@@ -1,0 +1,3 @@
+---
+private_subnet_prefix: 192.168.200
+public_subnet_prefix: 192.168.201

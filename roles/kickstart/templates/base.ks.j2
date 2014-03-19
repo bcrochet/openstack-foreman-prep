@@ -7,6 +7,7 @@ emacs-common
 screen
 nc
 libselinux-python
+perl
 %end
 
 reboot
@@ -26,9 +27,9 @@ bootloader --location=mbr --append="console=tty0 console=ttyS0,115200 rd_NO_PLYM
 clearpart --all
 part /boot --fstype ext4 --size=400
 part swap --size=100
-part pv.01 --size=8000
+part pv.01 --size=1000 --grow
 volgroup lv_admin --pesize=32768 pv.01
-logvol / --fstype ext4 --name=lv_root --vgname=lv_admin --size=7000 --grow
+logvol / --fstype ext4 --name=lv_root --vgname=lv_admin --size=4000 --grow
 zerombr
 network --bootproto=dhcp --device=eth0
 

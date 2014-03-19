@@ -1,10 +1,20 @@
 ---
 - name: Clone the real images
-  shell: virt-clone -o {{ initimage }} -n {{ item.name }} -f {{ poolpath }}/{{ item.name }}.qcow2 creates={{ poolpath }}/{{ item.name }}.qcow2
+  shell: virt-clone -o {{ item.initimage }} -n {{ item.name }} -f {{ poolpath }}/{{ item.name }}.qcow2 creates={{ poolpath }}/{{ item.name }}.qcow2
   with_items: vmset
   register: cloned
   tags:
     - clone_images
+
+- name: Attach network devices
+  shell: virsh attach-interface {{ item.0.name }} --type network --source {{ item.1 }}_{{ network_number }} --model virtio --config
+  with_nested:
+    - vmset
+    - network_names
+
+- name: Set memory
+  shell: virsh setmaxmem {{ item.name }} {{ item.memory }} --config
+  with_items: vmset
 
 - name: Sysprep the real images
   shell: virt-sysprep --enable {{ sysprep_operations }} -d {{ item.name }}

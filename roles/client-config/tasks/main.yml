@@ -33,3 +33,6 @@
   when: apic_disabled.rc != 0
   tags:
     - client_config
+
+- name: Yum update all
+  yum: name=* state=latest

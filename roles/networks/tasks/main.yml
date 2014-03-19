@@ -4,7 +4,7 @@
 
 - name: Is default network already changed?
   shell: virsh net-dumpxml default | grep {{ default_ip_prefix }}
-  ignore_errors: True
+  failed_when: false
   register: default_network_changed
 
 - name: Change default network ip
@@ -12,14 +12,12 @@
   when: default_network_changed|failed
 
 - name: Create foreman network xml
-  template: src={{ item[0] }}.xml.j2 dest=/tmp/{{ item[0] }}_{{ item[1] }}.xml
-  with_nested:
+  template: src={{ item[0] }}.xml.j2 dest=/tmp/{{ item[0] }}_{{ network_number }}.xml
+  with_items:
     - network_names
-    - network_numbers
 
 - name: Create foreman networks
-  script: create_networks.sh {{ item[0] }} {{ item[1] }}
-  with_nested:
+  script: create_networks.sh {{ item[0] }} {{ network_number }}
+  with_items:
     - network_names
-    - network_numbers
 
